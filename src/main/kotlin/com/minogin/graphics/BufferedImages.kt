@@ -290,6 +290,45 @@ fun BufferedImage.subimage(x: Int, y: Int, w: Int, h: Int): BufferedImage {
     return getSubimage(x1, y1, x2 - x1, y2 - y1)
 }
 
+fun BufferedImage.rotateQuadrant(angleDegree: Int): BufferedImage {
+    val w: Double
+    val h: Double
+    val tx: Double
+    val ty: Double
+    when {
+        angleDegree == 0 -> return this
+        angleDegree % 180 == 0 -> {
+            w = width.toDouble()
+            h = height.toDouble()
+            tx = 0.0
+            ty = 0.0
+        }
+        angleDegree % 90 == 0 -> {
+            w = height.toDouble()
+            h = width.toDouble()
+            tx = (w - h) / 2
+            ty = (h - w) / 2
+        }
+        else -> throw IllegalArgumentException("Angle must be a multiple of 90")
+    }
+
+    val rotatedImage = BufferedImages.create(w.roundToInt(), h.roundToInt(), getImageType())
+    val g = rotatedImage.createBestQualityGraphics()
+
+    val cx = w / 2
+    val cy = h / 2
+
+    try {
+        g.translate(tx, ty)
+        g.rotate(Math.toRadians(angleDegree.toDouble()), cx - tx, cy - ty)
+        g.drawRenderedImage(this, null)
+    } finally {
+        g.dispose()
+    }
+
+    return rotatedImage
+}
+
 data class ImageSize(val width: Int, val height: Int)
 
 /** Get image size without loading the image.  */

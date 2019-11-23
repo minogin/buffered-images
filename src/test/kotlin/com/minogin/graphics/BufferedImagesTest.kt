@@ -63,4 +63,11 @@ class BufferedImagesTest {
         subimage = image.subimage(3000, 3000, 1000, 1000)
         subimage.save("d:/temp/sz.jpg", ImageType.JPEG)
     }
+
+    @Test
+    fun imageRotates() {
+        val image = BufferedImages.load(IMAGES_PATH + "2.jpg") // 1000x667
+        var rotated = image.rotateQuadrant(90);
+        rotated.save("d:/temp/r.jpg", ImageType.JPEG)
+    }
 }
